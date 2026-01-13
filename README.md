@@ -142,19 +142,19 @@ cd /var/discourse
 2️⃣ Edit your container config:
 
 ```
-nano containers/app.yml
+sudo nano containers/app.yml
 ```
 
 Inside the `plugins:` section, add:
 
 ```
-- git clone https://github.com/YOUR-ORG/discourse-debates.git
+- git clone https://github.com/Rethinking-the-Wine-Industry/discourse-debate
 ```
 
 3️⃣ Rebuild Discourse:
 
 ```
-./launcher rebuild app
+sudo ./launcher rebuild app
 ```
 
 ---
