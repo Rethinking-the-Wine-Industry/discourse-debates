@@ -40,10 +40,7 @@ after_initialize do
   end
 
   add_to_serializer(:topic_view, :debate_stance) do
-    TopicUserCustomField.where(
-      topic_id: object.topic.id,
-      user_id: scope.user&.id,
-      name: "debate_stance"
-    ).pluck(:value).first
+    object.topic_view&.user_data&.custom_fields&.dig("debate_stance")
   end
+
 end
