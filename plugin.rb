@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# name: discourse-debate
+# name: discourse-debates
 # about: Structured debates with suggestion box, voting, and stance selection
 # version: 0.1.0
 # authors: Your Name
-# url: https://github.com/Rethinking-the-Wine-Industry/discourse-debate
+# url: https://github.com/your-org/discourse-debates
 
 enabled_site_setting :debate_enabled
 
@@ -12,7 +12,7 @@ register_asset "stylesheets/debates.scss"
 
 after_initialize do
   module ::DiscourseDebates
-    PLUGIN_NAME = "discourse-debate"
+    PLUGIN_NAME = "discourse-debates"
   end
 
   # == Models ==
