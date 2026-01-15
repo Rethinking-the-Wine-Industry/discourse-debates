@@ -21,11 +21,6 @@ after_initialize do
   # == Controllers ==
   require_relative "app/controllers/discourse_debates/stances_controller"
 
-  # == Routes ==
-  Discourse::Application.routes.append do
-    mount ::DiscourseDebates::Engine, at: "/debate"
-  end
-
   # == Topic Custom Fields ==
   Topic.register_custom_field_type("debate_counts", :json)
   Topic.register_custom_field_type("is_debate", :boolean)
@@ -43,4 +38,9 @@ after_initialize do
     object.topic_view&.user_data&.custom_fields&.dig("debate_stance")
   end
 
+  # == Routes ==
+  Discourse::Application.routes.append do
+    post "/debate/stance" => "discourse_debates/stances#create"
+    get  "/debate/counts/:topic_id" => "discourse_debates/stances#counts"
+  end
 end
