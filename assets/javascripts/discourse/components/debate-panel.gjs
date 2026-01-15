@@ -79,7 +79,6 @@ export default class DebatePanel extends Component {
             <input
               type="radio"
               name="debate-stance"
-              checked={{eq this.stance "favor"}}
               {{on "change" (fn this.selectStance "favor")}}
             />
             For
@@ -89,7 +88,6 @@ export default class DebatePanel extends Component {
             <input
               type="radio"
               name="debate-stance"
-              checked={{eq this.stance "neutral"}}
               {{on "change" (fn this.selectStance "neutral")}}
             />
             Neutral
@@ -99,7 +97,6 @@ export default class DebatePanel extends Component {
             <input
               type="radio"
               name="debate-stance"
-              checked={{eq this.stance "against"}}
               {{on "change" (fn this.selectStance "against")}}
             />
             Against
