@@ -4,13 +4,11 @@
 # authors: Rethinking Wine
 # url: https://github.com/Rethinking-the-Wine-Industry/discourse-debates
 
-after_initialize do
-  register_site_setting(
-    :debate_enabled,
-    default: true,
-    type: :bool,
-    client: true
-  )
-end
+register_asset "config/settings.yml"
 
+enabled_site_setting :discourse_debates_enabled
+
+after_initialize do
+  # Backend será adicionado aqui nos próximos passos
+end
 

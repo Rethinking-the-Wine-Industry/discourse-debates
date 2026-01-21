@@ -6,7 +6,7 @@ export default {
     withPluginApi("1.9.0", (api) => {
         console.log("frontend loaded")
     //   if (!api.getCurrentUser()) return;
-    //   if (!api.siteSettings?.debate_enabled) return;
+    //   if (!api.siteSettings?.discourse_debates_enabled) return;
 
       // frontend será conectado nos próximos passos
     });
