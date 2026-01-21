@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module ::DebatesModule
-  class DiscourseDebates::DebateController < ::ApplicationController
+module ::DiscourseDebates
+  class DebateController < ::ApplicationController
     requires_plugin "discourse-debates"
 
     def index
