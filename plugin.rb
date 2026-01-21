@@ -8,8 +8,6 @@ register_asset "config/settings.yml"
 
 enabled_site_setting :debate_enabled
 
-require_relative "lib/discourse_debates/engine"
-
 after_initialize do
   # Backend será adicionado aqui nos próximos passos
 end
