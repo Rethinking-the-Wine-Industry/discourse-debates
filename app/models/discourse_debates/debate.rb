@@ -1,6 +1,6 @@
 module DiscourseDebates
   class Debate < ::ActiveRecord::Base
-    self.table_name = "debates"
+    self.table_name = "discourse_debates"
 
     belongs_to :topic
 
