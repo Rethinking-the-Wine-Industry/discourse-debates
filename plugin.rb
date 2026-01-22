@@ -15,6 +15,10 @@ after_initialize do
       isolate_namespace DiscourseDebates
     end
   end
+  
+  Discourse::Application.routes.append do
+    mount ::DiscourseDebates::Engine, at: "/debates"
+  end
 end
 
 
