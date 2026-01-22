@@ -9,6 +9,12 @@ register_asset "config/settings.yml"
 enabled_site_setting :discourse_debates_enabled
 
 after_initialize do
-  # Backend será adicionado aqui nos próximos passos
+  module ::DiscourseDebates
+    class Engine < ::Rails::Engine
+      engine_name "discourse_debates"
+      isolate_namespace DiscourseDebates
+    end
+  end
 end
+
 
