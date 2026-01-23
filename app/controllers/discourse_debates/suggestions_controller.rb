@@ -1,53 +1,42 @@
-# frozen_string_literal: true
-
 module DiscourseDebates
   class SuggestionsController < ::ApplicationController
     requires_plugin "discourse-debates"
-
     before_action :ensure_logged_in
 
     def vote
       topic = Topic.find(params[:topic_id])
 
-      unless suggestion_box_topic?(topic)
-        return render json: { error: "invalid_category" }, status: 422
+      vote_value = params.require(:vote)
+      unless %w[yes no].include?(vote_value)
+        return render_json_error("invalid_vote")
       end
 
-      vote_value =
-        case params[:vote]
-        when "yes" then 1
-        when "no" then -1
-        else
-            return render json: { error: "invalid_vote" }, status: 422
-        end
+      suggestion_vote =
+        DiscourseDebates::SuggestionVote.find_or_initialize_by(
+          topic_id: topic.id,
+          user_id: current_user.id
+        )
 
-      DiscourseDebates::SuggestionVote.create!(
-        topic_id: topic.id,
-        user_id: current_user.id,
-        vote: vote_value
-      )
+      suggestion_vote.vote = vote_value
+      suggestion_vote.save!
 
-      render json: votes_summary(topic)
-    rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
-      render json: { error: "already_voted" }, status: 422
+      render json: {
+        vote: suggestion_vote.vote,
+        counts: vote_counts_for(topic),
+      }
+    rescue ActiveRecord::RecordInvalid => e
+      render_json_error(e.record.errors.full_messages.join(", "))
     end
 
     private
 
-    def suggestion_box_topic?(topic)
-      suggestion_category_id = SiteSetting.discourse_debates_suggestion_category_id
-      topic.category_id == suggestion_category_id
-    end
+    def vote_counts_for(topic)
+      votes = DiscourseDebates::SuggestionVote.where(topic_id: topic.id)
 
-    def votes_summary(topic)
-    votes = DiscourseDebates::SuggestionVote.where(topic_id: topic.id)
-
-    {
-        yes: votes.where(vote: 1).count,
-        no: votes.where(vote: -1).count,
-        total: votes.count,
-        user_vote: votes.find_by(user_id: current_user.id)&.vote
-    }
+      {
+        yes: votes.yes.count,
+        no: votes.no.count,
+      }
     end
   end
 end
