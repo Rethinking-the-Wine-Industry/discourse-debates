@@ -23,7 +23,7 @@ module DiscourseDebates
 
       DiscourseDebates::SuggestionVote.create!(
         topic_id: topic.id,
-        user_id: current_user.id
+        user_id: current_user.id,
         vote: vote_value
       )
 
