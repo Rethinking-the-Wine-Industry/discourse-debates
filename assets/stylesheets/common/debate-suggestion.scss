@@ -1,0 +1,27 @@
+.debate-suggestion-panel {
+  padding: 1em;
+  border: 1px solid var(--primary-low);
+  border-radius: 6px;
+  margin-bottom: 1em;
+
+  .question {
+    font-weight: 600;
+    margin-bottom: 0.5em;
+  }
+
+  .votes {
+    display: flex;
+    gap: 1em;
+  }
+
+  .vote {
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &.active {
+      background: var(--tertiary);
+      color: white;
+    }
+  }
+}
