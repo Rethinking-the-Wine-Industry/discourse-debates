@@ -5,7 +5,7 @@ module DiscourseDebates
     belongs_to :user
     belongs_to :topic
 
-    enum vote: {
+    enum :vote, {
       no: -1,
       yes: 1
     }
