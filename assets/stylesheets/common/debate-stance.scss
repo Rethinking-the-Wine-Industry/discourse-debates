@@ -1,0 +1,52 @@
+.debate-stance-picker {
+  margin-left: 1rem;
+}
+
+.segmented-control {
+  display: inline-flex;
+  border: 1px solid var(--primary-low);
+  border-radius: 999px;
+  overflow: hidden;
+
+  button {
+    background: transparent;
+    border: none;
+    padding: 0.4em 0.9em;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--primary-medium);
+
+    &.active {
+      background: var(--tertiary);
+      color: var(--secondary);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+}
+
+.debate-stance-badge {
+  margin-left: 0.4em;
+  padding: 0.15em 0.5em;
+  border-radius: 999px;
+  font-size: 0.75em;
+  font-weight: 600;
+
+  &.for {
+    background: #e6f4ea;
+    color: #1e7f43;
+  }
+
+  &.neutral {
+    background: #eef1f4;
+    color: #555;
+  }
+
+  &.against {
+    background: #fdecea;
+    color: #b42318;
+  }
+}

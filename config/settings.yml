@@ -2,13 +2,34 @@ plugins:
   discourse_debates_enabled:
     default: false
     client: true
+  discourse_debates_suggestion_category_id:
+    default: -1
+    type: integer
+    client: true
+  discourse_debates_debate_category_id:
+    default: -1
+    type: integer
+    client: true
   discourse_debates_suggestion_min_votes:
     default: 10
     client: true
     type: integer
     min: 1
     max: 100
-  discourse_debates_suggestion_category_id:
-    default: -1
-    type: integer
+  discourse_debates_suggestion_days:
+    default: 7
+    min: 1
+  topic_custom_field_enabled:
+    default: true
     client: true
+  topic_custom_field_name:
+    default: 'debate_stance'
+    client: true
+  topic_custom_field_type:
+    default: 'enum'
+    client: true
+    type: enum
+    choices:
+      - for
+      - neutral
+      - against

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+#
 module DiscourseDebates
   class SuggestionVote < ::ActiveRecord::Base
     self.table_name = "discourse_debates_suggestion_votes"
@@ -5,10 +7,7 @@ module DiscourseDebates
     belongs_to :user
     belongs_to :topic
 
-    enum :vote, {
-      no: -1,
-      yes: 1
-    }
+    enum :vote, { no: -1, yes: 1 }
 
     validates :topic_id, presence: true
     validates :user_id, presence: true
