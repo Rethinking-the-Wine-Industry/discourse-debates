@@ -7,7 +7,7 @@
 
 register_asset "config/settings.yml"
 register_asset "stylesheets/common/discourse-debates.scss"
-register_asset "stylesheets/common/debate-stance.scss"
+register_svg_icon "wine-glass"
 
 enabled_site_setting :discourse_debates_enabled
 
@@ -71,11 +71,12 @@ after_initialize do
 
   add_to_serializer(
     :topic_view,
-    :stance_vote_count,
+    :stance_count,
     include_condition: -> { object.topic.debate_topic? },
   ) do
     return nil unless scope.user
-    ::DiscourseDebates::Stance.where(topic_id: object.topic.id)&.count
+    stances = ::DiscourseDebates::Stance.where(topic_id: object.topic.id)
+    { for: stances.for.count, neutral: stances.neutral.count, against: stances.against.count }
   end
 
   add_to_serializer(:post, :current_user_stance) { object.custom_fields["current_user_stance"] }

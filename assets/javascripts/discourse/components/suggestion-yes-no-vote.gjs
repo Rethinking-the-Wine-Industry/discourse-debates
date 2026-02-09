@@ -1,16 +1,24 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
+import { fn } from "@ember/helper";
+import { on } from "@ember/modifier";
 import { action } from "@ember/object";
-import DButton from "discourse/components/d-button";
+import icon from "discourse/helpers/d-icon";
 import { ajax } from "discourse/lib/ajax";
+import { popupAjaxError } from "discourse/lib/ajax-error";
 
 export default class SuggestionYesNoVote extends Component {
   @tracked loading = false;
-  @tracked user_vote = null;
+  @tracked current_user_vote = null;
+  @tracked suggestion_vote_count = null;
 
   constructor() {
     super(...arguments);
-    this.user_vote = this.topic.current_user_vote;
+    this.current_user_vote = this.topic.current_user_vote;
+    this.suggestion_vote_count = this.topic.suggestion_vote_count || {
+      yes: 0,
+      no: 0,
+    };
   }
 
   get topic() {
@@ -21,43 +29,42 @@ export default class SuggestionYesNoVote extends Component {
     return this.topic.is_suggestion;
   }
 
-  get votes() {
-    return (
-      this.topic?.custom_fields?.suggestion_votes || {
-        yes: 0,
-        no: 0,
-      }
-    );
-  }
-
   get canVote() {
-    return !this.user_vote;
+    return !this.current_user_vote;
   }
 
   get yesLabel() {
-    return `Yes (${this.votes.yes})`;
+    return `Yes (${this.suggestion_vote_count.yes})`;
   }
 
   get noLabel() {
-    return `No (${this.votes.no})`;
+    return `No (${this.suggestion_vote_count.no})`;
+  }
+
+  get isYes() {
+    return this.current_user_vote === "yes" || this.current_user_vote === 1;
+  }
+
+  get isNo() {
+    return this.current_user_vote === "no" || this.current_user_vote === -1;
+  }
+
+  get yesClass() {
+    return this.isYes ? "active" : "";
+  }
+
+  get noClass() {
+    return this.isNo ? "active" : "";
   }
 
   get userVoteLabel() {
-    if (this.userVote === "yes" || this.userVote === 1) {
+    if (this.isYes) {
       return "Yes";
     }
-    if (this.userVote === "no" || this.userVote === 0) {
+    if (this.isNo) {
       return "No";
     }
     return null;
-  }
-
-  get yesDisabled() {
-    return !this.canVote;
-  }
-
-  get noDisabled() {
-    return !this.canVote;
   }
 
   @action
@@ -76,54 +83,50 @@ export default class SuggestionYesNoVote extends Component {
     }
 
     try {
-      const result = await ajax(`/debates/suggestions/${this.topic.id}/vote`, {
+      this.loading = true;
+      const result = await ajax(`/debates/suggestions/${this.topic.id}`, {
         type: "POST",
         data: { vote: value },
       });
 
-      this.topic.custom_fields ||= {};
-      this.topic.custom_fields.suggestion_votes = {
-        yes: result.counts.yes,
-        no: result.counts.no,
-      };
-      this.topic.custom_fields.user_vote = result.vote;
+      this.current_user_vote = result.vote;
+      this.suggestion_vote_count = result.counts;
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Vote failed", e);
+      popupAjaxError(e);
+    } finally {
+      this.loading = false;
     }
   }
 
   <template>
     {{#if this.enabled}}
-      <div class="debate-suggestion-vote">
-        <div class="question">
+      <div class="debate-suggestion-panel debate-suggestion-vote">
+        <h4 class="question">
           Do you think this issue should be open for debate?
+        </h4>
+
+        <div class="votes">
+          <button
+            disabled={{this.loading}}
+            class="btn btn-default {{this.yesClass}}"
+            {{on "click" (fn this.voteYes)}}
+          >
+            <span class="discourse-debates__icon">
+              {{icon "wine-glass"}}
+            </span>
+            {{this.yesLabel}}
+          </button>
+
+          <button
+            disabled={{this.loading}}
+            class="btn btn-default {{this.noClass}}"
+            {{on "click" (fn this.voteNo)}}
+          >
+            <span class="discourse-debates__icon against">
+              {{icon "wine-glass"}}
+            </span>
+            {{this.noLabel}}</button>
         </div>
-
-        <div class="buttons">
-          <DButton
-            @icon="thumbs-up"
-            @label={{this.yesLabel}}
-            @action={{this.voteYes}}
-            @disabled={{this.yesDisabled}}
-            class="btn-primary"
-          />
-
-          <DButton
-            @icon="thumbs-down"
-            @label={{this.noLabel}}
-            @action={{this.voteNo}}
-            @disabled={{this.noDisabled}}
-            class="btn-danger"
-          />
-        </div>
-
-        {{#if this.userVoteLabel}}
-          <div class="user-vote">
-            You voted:
-            <strong>{{this.userVoteLabel}}</strong>
-          </div>
-        {{/if}}
       </div>
     {{/if}}
   </template>

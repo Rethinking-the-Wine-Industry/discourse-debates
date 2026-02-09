@@ -3,16 +3,22 @@ import { tracked } from "@glimmer/tracking";
 import { fn } from "@ember/helper";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import { ajax } from "discourse/lib/ajax";
 import { popupAjaxError } from "discourse/lib/ajax-error";
+import StanceInfoModal from "./modal/stance-info";
 
 export default class DebateStancePicker extends Component {
+  @service modal;
+
   @tracked loading = false;
   @tracked stance = null;
+  @tracked stance_count = null;
 
   constructor() {
     super(...arguments);
     this.stance = this.topic.current_user_stance;
+    this.stance_count = this.topic.stance_count;
   }
 
   get topic() {
@@ -33,6 +39,15 @@ export default class DebateStancePicker extends Component {
 
   get isAgainst() {
     return this.stance === "against" ? "active" : "";
+  }
+
+  @action
+  openModal() {
+    this.modal.show(StanceInfoModal, {
+      model: {
+        stance_count: this.stance_count,
+      },
+    });
   }
 
   @action
@@ -58,8 +73,6 @@ export default class DebateStancePicker extends Component {
     {{#if this.enabled}}
       <div class="debate-stance-picker">
         <p class="question">Do you agree with this hypothesis?</p>
-        {{!-- <p class="question">enabled? {{this.enabled}}</p> --}}
-        <p class="question">Current Stance: {{this.stance}}</p>
         <div class="segmented-control">
           <button
             class="btn btn-default stance for {{this.isFor}}"
@@ -85,6 +98,10 @@ export default class DebateStancePicker extends Component {
             Against
           </button>
         </div>
+
+        <button class="btn btn-primary" {{on "click" this.openModal}}>
+          Overview
+        </button>
       </div>
     {{/if}}
   </template>
